@@ -1,0 +1,122 @@
+  .titulo {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .flex_titulo {
+    display: flex;
+    flex: 2;
+    justify-content: center;
+    align-items: flex-end;
+  }
+  
+  .border_top {
+    border-top: rgba(0, 0, 0, 0.591);
+    border-top-style: solid;
+    padding-top: 10px;
+  }
+
+  .analisis_de_sucursales {
+    font-size: 18;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 40px;
+  }
+  .text_graph_column {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .card_size {
+    background-color: #ffffff;
+    width: 160px;
+    height: 80px;
+  }
+
+  .card_size_2 {
+    background-color: #ffffff;
+    width: 160px;
+    height: 40px;
+  }
+
+  .total_captaciones {
+    font-size: 10px;
+  }
+
+  .difference_value_row {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+    margin-top: -10px;
+  }
+
+  .monthly_difference_value {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .monthly_pct_change {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .value_indicator {
+    display: flex;
+    flex-direction: row;
+    margin-top: 0px;
+  }
+
+  .value_and_indicator {
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+    justify-content: center;
+    margin-top: -10px;
+  }
+  .vs_mes_anterior {
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+    justify-content: center;
+    margin-top: -10px;
+  }
+
+  .flex_row {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .apply_border {
+    border: #90909086;
+    border-style:solid;
+    background-color: #ffffff;
+  }
+
+  .flex_item_1 {
+    
+    width: fit-content;
+    
+  }
+
+  .flex_item_2 {
+    flex-grow: 1;
+    overflow: auto;
+  }
+
+  .flex_1 {
+    flex: 1;
+    
+  }
+
+  .flex_2 {
+    flex: 2;
+  }
+
+  .padding_1 {
+    padding-top: 5px;
+  }
+  
