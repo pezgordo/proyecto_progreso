@@ -6,6 +6,7 @@ from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import pandas as pd
 from dash import dash_table
+import dash_table as dt
 import glob
 import os
 import plotly.express as px
@@ -28,6 +29,7 @@ df['Mes'] = df['fecha'].dt.month
 df['Dia'] = df['fecha'].dt.day
 df['Hora'] = df['fecha'].dt.hour
 df['NombreDia'] = df['fecha'].dt.day_name()
+
 
 
 # ***--- Begin DASH APP ---***
@@ -384,23 +386,96 @@ app.layout = html.Div([
         ], className='flex_1 apply_border'),
 
 
+        # RANKING DIV
 
         html.Div([
+            # RANKING CAPTACIONES
+            html.Div([
+
+                
+                html.Label("Raking Captaciones", style={'color':'#00622b',
+                                                        'font':'Arial',
+                                                        'font-weight':'bold',
+                                                        'fontSize':17,}),
+                html.P(children='Promedio',id = 'captaciones_mean_formatted', style={'font-weight':'bold',
+                                                                                      'text-align':'center'}),
+                                                    
+                dt.DataTable(id = 'ranking_sucursales_captaciones',
+                             #columns=[{'id' : c, 'name' : c } for c in df.columns],
+                             style_cell={'textAlign': 'left',
+                                         'min-width': '10px',
+                                         'backgroundColor': '#ffffff',
+                                         'color': '#00622b',
+                                         'fontSize':14,
+                                         'font-family':'sans-serif',
+                                         
+                                         },
+                      
+
+                            style_header={'backgroundColor': '#ffffff',
+                                          'fontWeight': 'bold',
+                                          'color': '#000000',
+                                          'border': '#00622b'},
+
+                            style_as_list_view=True,
+
+                            style_data_conditional=[],
+                            css=[{'selector': '.dash-spreadsheet tr', 'rule': 'height: 10px;'}]     
+                ),
+            ], className='flex_1'),
 
 
 
 
+            # RANKING COLOCACIONES
+            html.Div([
+                #html.P(id = '{0:,.1f} colocaciones_mean'),
+                
+                html.Label("Raking Colocaciones", style={'color':'#00622b',
+                                                        'font':'Arial',
+                                                        'font-weight':'bold',
+                                                        'fontSize':17,}),
+                html.P(children='Promedio',id = 'colocaciones_mean_formatted', style={'font-weight':'bold',
+                                                                                      'text-align':'center'}),
+                                                    
+                dt.DataTable(id = 'ranking_sucursales_colocaciones',
+                             #columns=[(name: 'sucursal', id: 'sucursal'), (name= 'monto', id='monto')],
+                             
+                             #'type': 'numeric', 'format': ',.0f'},
+                                 #],
+                             style_cell={'textAlign': 'left',
+                                         'min-width': '10px',
+                                         'backgroundColor': '#ffffff',
+                                         'color': '#00622b',
+                                         'fontSize':14,
+                                         'font-family':'sans-serif',
+                                         
+                                         },
+                      
+
+                            style_header={'backgroundColor': '#ffffff',
+                                          'fontWeight': 'bold',
+                                          'color': '#000000',
+                                          'border': '#00622b'},
+
+                            style_as_list_view=True,
+
+                            style_data_conditional=[],
+                            css=[{'selector': '.dash-spreadsheet tr', 'rule': 'height: 10px;'}]     
+                ),
+            ], className='flex_1'),
 
 
-
-        ], className='flex_1')
+        ], className='flex_1 flex_row apply_border')
     ],className='flex_row padding_1'),
-    # Div 6 ENDS - SUCURSALES - 4ta FILA
+    # Div 6 ENDS - SUCURSALES - 4ta FILA y RANKING
 
 
 
     # Div 4 Begins
     html.Div([
+
+        html.P('ANALISIS DE MOVIMIENTOS POR SUCURSAL', className='analisis_de_sucursales'),
 
         # Div 3.1 Begins Sucursal dropdown
         html.Div([
@@ -422,15 +497,7 @@ app.layout = html.Div([
         ], className='one-third column'),
         # Div 3.2 Ends
 
-        # Div 3.3 Begins - Tipo de Movimiento
-        html.Div([
-            dcc.Dropdown(
-                id='tipo_de_movimiento_dropdown',
-                options = df['tipo_de_movimiento'].unique(),
-                value = 'Microcreditos',
-            )
-        ], className='one-third column'),
-        # Div 3.3 Ends
+
     ],className='container column'),
     # Div 4 Ends
 
@@ -4585,18 +4652,20 @@ def update_text(select_years, select_months):
 
 
 
+
+
 # CB 2.1 LINE CHARTS FOR SUCURSALES
 
 @app.callback(
     Output('sucursales_charts', 'figure'),
     [Input('sucursal_dropdown', 'value'),
     Input('movimiento_dropdown', 'value'),
-    Input('tipo_de_movimiento_dropdown', 'value'),
+    #Input('tipo_de_movimiento_dropdown', 'value'),
     Input('select_years', 'value'),
     Input('select_months', 'value')]
 )
 
-def update_line_charts(sucursal_dropdown, movimiento_dropdown, tipo_de_movimiento_dropdown, select_years, select_months):
+def update_line_charts(sucursal_dropdown, movimiento_dropdown, select_years, select_months):
     
     
     df_sucursal= df[df['sucursal']==sucursal_dropdown]
@@ -4604,16 +4673,126 @@ def update_line_charts(sucursal_dropdown, movimiento_dropdown, tipo_de_movimient
     df_1 = df_sucursal.groupby(['Ano', 'Mes', 'Dia', 'movimiento', 'tipo_de_movimiento'])['monto'].sum().reset_index()
     df_2 = df_1[(df_1['Ano'] == select_years) & (df_1['Mes'] == select_months)]
 
-    df_3 = df_2[(df_2['movimiento'] == movimiento_dropdown) & (df_2['tipo_de_movimiento'] == tipo_de_movimiento_dropdown)]
+    #df_3 = df_2[(df_2['movimiento'] == movimiento_dropdown) & (df_2['tipo_de_movimiento'] == tipo_de_movimiento_dropdown)]
+    df_3 = df_2[(df_2['movimiento'] == movimiento_dropdown)]
+
 
     fig = px.line(
         df_3,
         x='Dia',
         y='monto',
-        title = 'sucursal'
+        title = 'sucursal',
+        color='tipo_de_movimiento',
+        markers=True,
     )
 
     return fig
+
+# END CB 2.1 LINE CHART FOR SUCURSALES 
+
+
+
+# CB 3.1 RANKING SUCURSALES - CAPTACIONES 
+@app.callback(
+    Output('ranking_sucursales_captaciones', 'data'),
+    Output('captaciones_mean_formatted', 'children'),
+    Output('ranking_sucursales_captaciones', 'style_data_conditional'),
+    [Input('select_years', 'value'),
+     Input('select_months', 'value')]
+)
+
+
+def ranking_sucursales(select_years, select_months):
+
+    # Select 'movimiento' type
+    df_1 = df[df['movimiento']=='Captaciones']
+
+    # groupby Ano, Mes, sucursal, movimiento AND sum 'monto'
+    df_2_mean = df_1.groupby(['Ano', 'Mes', 'sucursal', 'movimiento'])['monto'].sum().reset_index()
+
+    # Select years and months
+    df_3_mean =  df_2_mean[(df_2_mean['Ano']==select_years) & (df_2_mean['Mes']==select_months)]
+
+    # Get the mean (average) value of 'monto'
+    captaciones_mean = df_3_mean['monto'].mean()
+
+    captaciones_mean_formatted = 'Promedio: ' + '{0:,.0f}'.format(captaciones_mean)
+
+    # Sort descending by 'monto'
+    df_4_mean_sorted = df_3_mean.sort_values(by='monto', ascending=False)
+
+    # Select movimiento and monto columns
+    selected_columns = ['sucursal', 'monto']
+    df_selected_columns = df_4_mean_sorted[selected_columns]
+
+    # Update style_data_conditional with the calculated colocaciones_mean
+    style_data_conditional = [
+        {
+            'if': {
+                'filter_query': '{{monto}} < {}'.format(captaciones_mean),
+                'column_id': 'monto'
+            },
+            'backgroundColor': 'white',
+            'color': '#EC1E3D',
+        }
+    ]
+
+
+
+    return df_selected_columns.to_dict('records'), captaciones_mean_formatted, style_data_conditional
+
+
+# CB 3.2 RANKING SUCURSALES - COLOCACIONES 
+@app.callback(
+    Output('ranking_sucursales_colocaciones', 'data'),
+    Output('colocaciones_mean_formatted', 'children'),
+    Output('ranking_sucursales_colocaciones', 'style_data_conditional'),
+    [Input('select_years', 'value'),
+     Input('select_months', 'value')]
+)
+
+
+def ranking_sucursales(select_years, select_months):
+
+    # Select 'movimiento' type
+    df_1 = df[df['movimiento']=='Colocaciones']
+
+    # groupby Ano, Mes, sucursal, movimiento AND sum 'monto'
+    df_2_mean = df_1.groupby(['Ano', 'Mes', 'sucursal', 'movimiento'])['monto'].sum().reset_index()
+
+    # Select years and months
+    df_3_mean =  df_2_mean[(df_2_mean['Ano']==select_years) & (df_2_mean['Mes']==select_months)]
+
+    # Get the mean (average) value of 'monto'
+    colocaciones_mean = df_3_mean['monto'].mean()
+
+    colocaciones_mean_formatted = 'Promedio: ' + '{0:,.0f}'.format(colocaciones_mean)
+
+
+    # Sort descending by 'monto'
+    df_4_mean_sorted = df_3_mean.sort_values(by='monto', ascending=False)
+
+    # Select movimiento and monto columns
+    selected_columns = ['sucursal', 'monto']
+    df_selected_columns = df_4_mean_sorted[selected_columns]
+
+    # Update style_data_conditional with the calculated colocaciones_mean
+    style_data_conditional = [
+        {
+            'if': {
+                'filter_query': '{{monto}} < {}'.format(colocaciones_mean),
+                'column_id': 'monto'
+            },
+            'backgroundColor': 'white',
+            'color': '#EC1E3D',
+        }
+    ]
+
+
+    return df_selected_columns.to_dict('records'), colocaciones_mean_formatted, style_data_conditional
+
+
+
 
 
 if __name__ == '__main__':
