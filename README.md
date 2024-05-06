@@ -38,14 +38,4 @@ The dashboard provides real-time access to critical information about branch per
 
 - **Executives**: Use the dashboard to monitor branch performance, identify trends, and make data-driven decisions to drive performance improvements across the network.
 
-## Contributors
 
-- [Your Name]
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
----
-
-Feel free to customize this README with any additional information or formatting preferences!
